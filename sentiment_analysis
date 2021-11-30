@@ -1,0 +1,74 @@
+textblob_sentiment=[]
+for s in sentence:
+    txt= TextBlob(s)
+    a= txt.sentiment.polarity
+    b= txt.sentiment.subjectivity
+    textblob_sentiment.append([s,a,b])
+    
+df_textblob = pd.DataFrame(textblob_sentiment, columns =['Sentence', 'Polarity', 'Subjectivity'])
+
+sns.displot(df_textblob["Polarity"], height= 5, aspect=1.8)
+plt.xlabel("Sentence Polarity (Textblob)")
+
+
+sns.displot(df_textblob["Subjectivity"], height= 5, aspect=1.8)
+plt.xlabel("Sentence Subjectivity (Textblob)")
+
+
+pattern_sentiment=[]
+for s in sentence:
+    res= sentiment(s)
+    c= res[0]
+    d= res[1]
+    pattern_sentiment.append([s,c,d])
+    
+    
+df_pattern = pd.DataFrame(textblob_sentiment, columns =['Sentence', 'Polarity', 'Subjectivity'])
+
+sns.displot(df_pattern["Polarity"], height= 5, aspect=1.8)
+plt.xlabel("Sentence Polarity (Pattern)")
+
+sns.displot(df_pattern["Subjectivity"], height= 5, aspect=1.8)
+plt.xlabel("Sentence Subjectivity (Pattern)")
+
+#Creating the tokenizer
+tokenizer = nltk.tokenize.RegexpTokenizer('w+')
+
+#Tokenizing the text
+tokens = tokenizer.tokenize(clean_text)
+
+words = []
+# Looping through the tokens and make them lower case
+for word in tokens:
+    words.append(word.lower())
+    
+
+#Appending to words_new all words that are in words but not in sw
+for word in words:
+    if word not in stopwords:
+        words_new.append(word)
+        
+        
+#The frequency distribution of the words
+freq_dist = nltk.FreqDist(words_new)
+
+#Frequency Distribution Plot
+plt.subplots(figsize=(16,10))
+freq_dist.plot(20)
+
+#converting into string
+res=' '.join([i for i in words_new if not i.isdigit()])
+
+
+plt.subplots(figsize=(16,10))
+wordcloud = WordCloud(
+                          background_color='black',
+                          max_words=100,
+                          width=1400,
+                          height=1200
+                         ).generate(res)
+plt.imshow(wordcloud)
+plt.title('NEWS ARTICLE (100 words)')
+plt.axis('off')
+plt.show()
+
